@@ -18,7 +18,7 @@
 			document.getElementById('link').href = uri
 
 			// do not open on page reload
-			if (sessionStorage.getItem('open') === '1')
+			if (sessionStorage.getItem('open') === '1' || location.search === '')
 				return
 
 			if (window.open(uri)) {
