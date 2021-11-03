@@ -1,22 +1,26 @@
 const uri = 'zoommtg://zoom.us/join' + location.search
+
+const search = new URLSearchParams(location.search)
+const origUri = 'https://us04web.zoom.us/j/' +
+search.get('confno') + '?pwd=' + search.get('pwd')
+
 const blockedMessage = 'Please allow pop-ups to open links automatically'
 
 const timeouts = []
 let retry_open = 0
 
-function writeOrigLink() {
-	const search = new URLSearchParams(location.search)
-	const origUri = 'https://us04web.zoom.us/j/' +
-	search.get('confno') + '?pwd=' + search.get('pwd')
+function writeLinks() {
+	// zoommtg
+	document.getElementById('code').innerHTML = uri
+	document.getElementById('link').href = uri
 
+	// us04web.zoom.us
 	document.getElementById('us-code').innerHTML = origUri
 	document.getElementById('us-link').href = origUri
 }
 
 function openZoom() {
-	document.getElementById('code').innerHTML = uri
-	document.getElementById('link').href = uri
-	writeOrigLink()
+	writeLinks()
 
 	// do not open on page reload
 	if (sessionStorage.getItem('open') === '1' || location.search === '')
