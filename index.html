@@ -6,57 +6,7 @@
 	<link rel="shortcut icon" href="favicon.png" type="image/png">
 	<title>Open zoom</title>
 
-	<script type="text/javascript">
-		const uri = 'zoommtg://zoom.us/join' + location.search
-		const blockedMessage = 'Please allow pop-ups to open links automatically'
-
-		const timeouts = []
-		let retry_open = 0
-
-		function writeOrigLink() {
-			const search = new URLSearchParams(location.search)
-			const origUri = 'https://us04web.zoom.us/j/' +
-			search.get('confno') + '?pwd=' + search.get('pwd')
-
-			document.getElementById('us-code').innerHTML = origUri
-			document.getElementById('us-link').href = origUri
-		}
-
-		function openZoom() {
-			document.getElementById('code').innerHTML = uri
-			document.getElementById('link').href = uri
-			writeOrigLink()
-
-			// do not open on page reload
-			if (sessionStorage.getItem('open') === '1' || location.search === '')
-				return
-
-			if (window.open(uri)) {
-				sessionStorage.setItem('open', '1')
-				const i = setTimeout(() => {
-					sessionStorage.removeItem('open')
-				}, 10 * 1000)
-
-				timeouts.push(i)
-			} else {
-				document.getElementById('blocked').innerHTML = blockedMessage
-
-				if (retry_open > 4)
-					return
-
-				// looks like a bug, but retry of window.open()
-				// works for me even if pop-ups blocked
-				console.log('retry call window.open()')
-				setTimeout(openZoom, 1000)
-				retry_open++
-			}
-		}
-
-		document.addEventListener('DOMContentLoaded', openZoom)
-		document.addEventListener('unload', () => {
-			timeouts.forEach(t => clearTimeout(t))
-		})
-	</script>
+	<script type="text/javascript" src="index.js"></script>
 
 	<style type="text/css">
 		* {
