@@ -3,17 +3,34 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Test zoom open</title>
+	<title>Open zoom</title>
+
+	<script type="text/javascript">
+		document.addEventListener('DOMContentLoaded', () => {
+			const uri = 'zoommtg://zoom.us/join' + location.search
+			document.getElementById('code').innerHTML = uri
+			window.open(uri)
+			document.getElementById('link').href = uri
+		})
+	</script>
+
+	<style type="text/css">
+		* {
+			font-family: sans-serif;
+		}
+		code {
+			font-family: monospace;
+		}
+	</style>
 </head>
 <body>
-	<script type="text/javascript">
-		let params = new URLSearchParams(location.search)
-		let id = params.get('id'), pwd = params.get('pwd')
-		let url = `zoommtg://zoom.us/join?confno=${id}&pwd=${pwd}`
-		setTimeout(() => {
-			alert('open ' + url)
-			window.open(url)
-		}, 2000)
-	</script>
+	<center>
+		<h4>Open zoom immediately</h4>
+		<p>
+			<a id="link" href="">
+				<code id="code"></code>
+			</a>
+		</p>
+	</center>
 </body>
 </html>
