@@ -7,11 +7,44 @@
 	<title>Open zoom</title>
 
 	<script type="text/javascript">
-		document.addEventListener('DOMContentLoaded', () => {
-			const uri = 'zoommtg://zoom.us/join' + location.search
+		const uri = 'zoommtg://zoom.us/join' + location.search
+		const blockedMessage = 'Please allow pop-ups to open links automatically'
+
+		const timeouts = []
+		let retry_open = 0
+
+		function openZoom() {
 			document.getElementById('code').innerHTML = uri
-			window.open(uri)
 			document.getElementById('link').href = uri
+
+			// do not open on page reload
+			if (sessionStorage.getItem('open') === '1')
+				return
+
+			if (window.open(uri)) {
+				sessionStorage.setItem('open', '1')
+				const i = setTimeout(() => {
+					sessionStorage.removeItem('open')
+				}, 10 * 1000)
+
+				timeouts.push(i)
+			} else {
+				document.getElementById('blocked').innerHTML = blockedMessage
+
+				if (retry_open > 4)
+					return
+
+				// looks like a bug, but retry of window.open()
+				// works for me even if pop-ups blocked
+				console.log('retry call window.open()')
+				setTimeout(openZoom, 1000)
+				retry_open++
+			}
+		}
+
+		document.addEventListener('DOMContentLoaded', openZoom)
+		document.addEventListener('unload', () => {
+			timeouts.forEach(t => clearTimeout(t))
 		})
 	</script>
 
@@ -32,6 +65,7 @@
 				<code id="code"></code>
 			</a>
 		</p>
+		<p id="blocked"></p>
 	</center>
 </body>
 </html>
