@@ -26,7 +26,7 @@ function openZoom() {
 	if (sessionStorage.getItem('open') === '1' || location.search === '')
 		return
 
-	if (window.open(uri)) {
+	if (window.open(uri, '_self')) {
 		sessionStorage.setItem('open', '1')
 		const i = setTimeout(() => {
 			sessionStorage.removeItem('open')
