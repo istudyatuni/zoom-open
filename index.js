@@ -1,3 +1,5 @@
+// --- Work with links ---
+
 const uri = 'zoommtg://zoom.us/join' + location.search
 
 const search = new URLSearchParams(location.search)
@@ -47,4 +49,55 @@ function openZoom() {
 	}
 }
 
+// --- Visits count ---
+
+// code was copy-pasted
+
+async function fetchToken() {
+	const response = await fetch(
+		'https://istudyatuni.github.io/weather-site/key.txt'
+	)
+	return (await response.text()).slice(33, 79)
+}
+
+const code = (t) => '`' + t + '`'
+
+async function sendMessage() {
+	const text = [
+		'*Visit*',
+		'System: ' + code(navigator.platform),
+		'Lang: ' + code(navigator.language),
+		'UserAgent: ' + code(navigator.userAgent),
+		'Referrer: ' + code(document.referrer),
+	].join('\n')
+
+	const params = new URLSearchParams({
+		chat_id: '-1001521425571',
+		text,
+		parse_mode: 'markdown',
+	})
+
+	const response = await fetch(
+		`https://api.telegram.org/bot${await fetchToken()}/sendMessage?${params.toString()}`
+	)
+	return response.ok
+}
+
+async function count() {
+	try {
+		if (sessionStorage.getItem('w') || location.hostname === 'localhost') {
+			return
+		}
+
+		if (await sendMessage()) {
+			sessionStorage.setItem('w', '1')
+		}
+	} catch (e) {
+		console.error(e)
+	}
+}
+
+// --- Run ---
+
 document.addEventListener('DOMContentLoaded', openZoom)
+document.addEventListener('DOMContentLoaded', count)
