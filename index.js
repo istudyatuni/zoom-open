@@ -6,8 +6,13 @@ search.get('confno') + '?pwd=' + search.get('pwd')
 
 const blockedMessage = 'Please allow pop-ups to open links automatically'
 
-const timeouts = []
 let retry_open = 0
+
+let current = new Date()
+let newTime = new Date()
+newTime.setMinutes(newTime.getMinutes() + 10)
+
+const savedTime = parseInt(sessionStorage.getItem('open') || 0)
 
 function writeLinks() {
 	// zoommtg
@@ -23,16 +28,11 @@ function openZoom() {
 	writeLinks()
 
 	// do not open on page reload
-	if (sessionStorage.getItem('open') === '1' || location.search === '')
+	if (savedTime > current.getTime() || location.search === '')
 		return
 
 	if (window.open(uri, '_self')) {
-		sessionStorage.setItem('open', '1')
-		const i = setTimeout(() => {
-			sessionStorage.removeItem('open')
-		}, 10 * 1000)
-
-		timeouts.push(i)
+		sessionStorage.setItem('open', newTime.getTime())
 	} else {
 		document.getElementById('blocked').innerHTML = blockedMessage
 
@@ -48,6 +48,3 @@ function openZoom() {
 }
 
 document.addEventListener('DOMContentLoaded', openZoom)
-document.addEventListener('unload', () => {
-	timeouts.forEach(t => clearTimeout(t))
-})
